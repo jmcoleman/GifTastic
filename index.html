@@ -5,15 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <!-- Bootstrap 4.1 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
     <title>GifTastic</title>
 </head>
 <body>
 
     <!-- Page Content-->
-    <div id="topic-list">
-    </div>
+    <div class="container">
 
-    <div id="gifs">
+        <div class="row">
+            <div class="col-12">
+                <div id="topic-list">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <form role="form">
+                    <div class="form-group row">
+                        <label for="topic-input">Topic:</label>
+                        <input class="form-control" id="topic-input" type="text" placeholder="Enter new topic">
+                    </div>
+                    <button class="btn btn-default mb-4" id="add-topic" type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div id="gifs">
+                </div>
+            </div>
+        </div>
+
     </div>
 
 
@@ -44,16 +71,21 @@
                 console.log(element);
 
                 // add a button for each element in the array
-                var newBtn = $("<button>");
-                newBtn.attr("data-topic",element);
-                newBtn.addClass("search-button");
-                newBtn.text(element);
-
-                var attachTo = $("#topic-list");
-                attachTo.append(newBtn);
+                addTopicButton(element);
             });
 
         };
+
+        function addTopicButton(item) {
+            // add a button
+            var newBtn = $("<button>");
+            newBtn.attr("data-topic",item);
+            newBtn.addClass("search-button btn btn-dark my-3 mx-1");
+            newBtn.text(item);
+
+            var attachTo = $("#topic-list");
+            attachTo.append(newBtn);
+        }
 
         ///////////////////////////////////////////
         // JQuery
@@ -62,7 +94,24 @@
 
             createTopicButtons();
 
-            $("button.search-button").on("click", function() {
+            $("#add-topic").on("click", function() {
+                event.preventDefault();
+
+                console.log("add topic submit");
+
+                var inputData = $("#topic-input").val().trim();
+
+                // if a value is given
+                if (!isEmpty(inputData)) {
+                    // add a new button for the topic
+                    addTopicButton(inputData);
+                }
+            });
+
+            $("#topic-list").delegate("button.search-button","click", function() {
+
+                // prevent the page from reloading
+                event.preventDefault();
 
                 // set up query string
                 var topic = $(this).attr("data-topic");
@@ -74,7 +123,6 @@
                     "&api_key=" + USER_API_KEY +
                     "&limit=" + itemLimit;
                 console.log(queryURL);
-
 
                 $.ajax({
                     url: queryURL,
@@ -96,11 +144,11 @@
                             p.text("Not Rated");
                         };
 
-                        var p2 =  $("<p>");
+                        var p2 =  $("<div>");
                         if (!isEmpty(results[i].title)) {
-                            p2.text("Title: " + ProperCase(results[i].title));                          // Capitalize the first letter of every word
+                            p2.text(ProperCase(results[i].title));                          // Capitalize the first letter of every word
                         } else {
-                            p2.text("Title: " + "NONE");
+                            p2.text("NONE");
                         };
 
                         var newImage = $("<img>");
@@ -125,6 +173,9 @@
             });
 
             $("#gifs").delegate(".animate", "click", function() {
+                // prevent the page from reloading
+                event.preventDefault();
+
                 console.log("GIF ready to animate");
 
                 var currentSrc =  $(this).attr("src");
@@ -145,5 +196,12 @@
 
         });
     </script>
+
+    <!-- Bootstrap 4.1 -->
+    <!--script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script-->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
 </body>
 </html>
