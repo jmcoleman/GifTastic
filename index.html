@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>GifTastic</title>
+</head>
+<body>
+
+    <!-- Page Content-->
+    <div id="topic-list">
+    </div>
+
+    <div id="gifs">
+    </div>
+
+
+    <!-- Giphy API -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+
+        ///////////////////////////////////////////
+        // Variables
+        ///////////////////////////////////////////
+        var topics = ["vacation", "summer", "holiday", "mountains", "beaches", "hiking", "sking", "play", "sleep", "movies"];
+
+        ///////////////////////////////////////////
+        // JavaScript
+        ///////////////////////////////////////////
+        function isEmpty(val) {
+            return (val === undefined || val == null || val.length <= 0) ? true : false;
+        };
+
+        function ProperCase(txt) {
+            return txt.replace(/\w\S*/g, c => c.charAt(0).toUpperCase() + c.substr(1).toLowerCase());
+        };
+
+        function createTopicButtons()
+        {
+            topics.forEach(element => {
+                console.log(element);
+
+                // add a button for each element in the array
+                var newBtn = $("<button>");
+                newBtn.attr("data-topic",element);
+                newBtn.addClass("search-button");
+                newBtn.text(element);
+
+                var attachTo = $("#topic-list");
+                attachTo.append(newBtn);
+            });
+
+        };
+
+        ///////////////////////////////////////////
+        // JQuery
+        ///////////////////////////////////////////
+        $(document).ready (function() {
+
+            createTopicButtons();
+
+            $("button.search-button").on("click", function() {
+
+                // set up query string
+                var topic = $(this).attr("data-topic");
+                var itemLimit = 10;
+                const USER_API_KEY = "qE5VEI7m7vEyr5u78viHHZEPaPRIkgo8";
+
+                var queryURL = "https://api.giphy.com/v1/gifs/search?" +
+                    "q=" + topic + 
+                    "&api_key=" + USER_API_KEY +
+                    "&limit=" + itemLimit;
+                console.log(queryURL);
+
+
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                }).then(function(response) {
+                    console.log(response);
+            
+                    var results = response.data;        // data returned from Giphy app
+            
+                    for (var i = 0; i < results.length; i++) {
+            
+                        // construct the HTML that will be added
+                        var newDiv = $("<div>");
+            
+                        var p =  $("<p>");
+                        if (!isEmpty(results[i].rating)) {
+                            p.text("Rated " + results[i].rating.toUpperCase());
+                        } else {
+                            p.text("Not Rated");
+                        };
+
+                        var p2 =  $("<p>");
+                        if (!isEmpty(results[i].title)) {
+                            p2.text("Title: " + ProperCase(results[i].title));                          // Capitalize the first letter of every word
+                        } else {
+                            p2.text("Title: " + "NONE");
+                        };
+
+                        var newImage = $("<img>");
+                        newImage.attr("src",results[i].images.fixed_height_still.url);
+                        if (!isEmpty(results[i].images.title)) {
+                            newImage.attr("alt", results[i].images.title);
+                        };
+                        newImage.attr("data-static",results[i].images.fixed_height_still.url);
+                        newImage.attr("data-animated",results[i].images.fixed_height.url);
+                        newImage.addClass("animate");
+            
+                        // add the elements to the DOM
+                        newDiv.append(newImage);
+                        newDiv.append(p2);
+                        newDiv.append(p);
+                        $("#gifs").prepend(newDiv);
+            
+                    };
+            
+                });
+
+            });
+
+            $("#gifs").delegate(".animate", "click", function() {
+                console.log("GIF ready to animate");
+
+                var currentSrc =  $(this).attr("src");
+                var animatedGIF = $(this).attr("data-static");
+                var staticGIF = $(this).attr("data-animated");
+
+                console.log(currentSrc);
+                console.log(animatedGIF);
+                console.log(staticGIF);
+                
+                if (currentSrc === animatedGIF) {
+                    $(this).attr("src",staticGIF);    
+                } else {
+                    $(this).attr("src",animatedGIF);
+                }
+
+            });
+
+        });
+    </script>
+</body>
+</html>
