@@ -15,6 +15,7 @@
     <!-- Page Content-->
     <div class="container">
 
+            <!-- Topic Buttons -->
         <div class="row">
             <div class="col-12">
                 <div id="topic-list">
@@ -22,18 +23,21 @@
             </div>
         </div>
 
+        <!-- New Topic -->
         <div class="row">
             <div class="col-12">
                 <form role="form">
                     <div class="form-group row">
                         <label for="topic-input">Topic:</label>
-                        <input class="form-control" id="topic-input" type="text" placeholder="Enter new topic">
+                        <input class="form-control" id="topic-input" type="text" placeholder="Enter new topic" autofocus>
                     </div>
                     <button class="btn btn-default mb-4" id="add-topic" type="submit">Submit</button>
+                    <p id="message"></p>
                 </form>
             </div>
         </div>
 
+        <!-- Gif Results -->
         <div class="row">
             <div class="col-12">
                 <div id="gifs">
@@ -100,11 +104,28 @@
                 console.log("add topic submit");
 
                 var inputData = $("#topic-input").val().trim();
+                $("#topic-input").val("");
 
                 // if a value is given
                 if (!isEmpty(inputData)) {
-                    // add a new button for the topic
-                    addTopicButton(inputData);
+
+                    // if topic is not already in the list
+                    if (topics.indexOf(inputData) === -1) {
+                        // adds to array
+                        topics.push(inputData);
+
+                        // add a new button for the topic
+                        //addTopicButton(inputData);
+
+                        // empty all the topics and reload them all
+                        var t = $("#topic-list");
+                        t.empty();
+                        createTopicButtons();
+
+                        $("#message").text("");
+                    } else {
+                        $("#message").text("Topic Already Entered.");
+                    }
                 }
             });
 
@@ -113,6 +134,9 @@
                 // prevent the page from reloading
                 event.preventDefault();
 
+                // clear any messges that remain from adding duplicate topics
+                $("#message").text("");
+                
                 // set up query string
                 var topic = $(this).attr("data-topic");
                 var itemLimit = 10;
@@ -123,6 +147,9 @@
                     "&api_key=" + USER_API_KEY +
                     "&limit=" + itemLimit;
                 console.log(queryURL);
+
+                // clear current results
+                $("#gifs").empty();
 
                 $.ajax({
                     url: queryURL,
