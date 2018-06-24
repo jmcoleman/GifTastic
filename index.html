@@ -5,37 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+
     <!-- Bootstrap 4.1 -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
 
     <title>GifTastic</title>
+
+    <!-- css styles -->
+    <style type="text/css">
+        body {
+            background: #F9F9F9;
+        }
+
+        #gifs {
+            display: grid;
+            /*margin: 0 auto;*/
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-auto-rows: minmax(150px, auto);
+            /*grid-auto-flow: dense;*/
+           grid-gap: 20px;
+         }
+/*
+        .tall-panel {
+            grid-row-end: span 2;
+        }
+*/
+        #gif-item > img {
+            object-fit: cover;
+            width: 100%;
+            max-height: 100%;
+        }
+
+    </style>
 </head>
 <body>
 
     <!-- Page Content-->
-    <div class="container">
+    <div class="container-fluid my-4">
 
-            <!-- Topic Buttons -->
+
+        <h1 class="text-center">GIFs Galore</h1>
+        <!-- Topic Buttons -->
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 w-auto">
+                <!--div id="topic-list" ondrop="drop(event,this);" ondragover="allowDrop(event);"-->
                 <div id="topic-list">
+                </div>
+                <div id="search-types" class="col-2">
+                </div>
+                <div class="ml-5 mr-auto">
+                    <input type="checkbox" id="clear-results" name="clear-gifs" value="clear" checked/>
+                    <label for="clear">Clear GIFs on Search</label>
                 </div>
             </div>
         </div>
 
         <!-- New Topic -->
-        <div class="row">
-            <div class="col-12">
-                <form role="form">
-                    <div class="form-group row">
-                        <label for="topic-input">Topic:</label>
-                        <input class="form-control" id="topic-input" type="text" placeholder="Enter new topic" autofocus>
-                    </div>
-                    <button class="btn btn-default mb-4" id="add-topic" type="submit">Submit</button>
-                    <p id="message"></p>
-                </form>
+        <form role="form" class="m-0">
+            <div class="form-group row m-2 d-flex">
+                <!--label class="col-form-label col-sm-1" for="topic-input">Topic:</label-->
+                <input class="form-control input-sm ml-1 col-sm-2" id="topic-input" type="text" placeholder="Enter topic or category" autofocus>
+                <button class="btn btn-primary btn-sm ml-3 px-5" id="add-topic" type="submit">Add</button>
+
+                <span id="message" class="ml-3 mt-1"></span>
             </div>
-        </div>
+        </form>
+
+        <hr>
 
         <!-- Gif Results -->
         <div class="row">
@@ -56,11 +94,27 @@
         ///////////////////////////////////////////
         // Variables
         ///////////////////////////////////////////
-        var topics = ["vacation", "summer", "holiday", "mountains", "beaches", "hiking", "sking", "play", "sleep", "movies"];
+        var topics = ["clapping", "LOL", "The Incredibles", "cat", "Bob Ross", "summer", "minions", "Nike", "holiday", "mountains", "beaches", "hiking", "sking", "play", "sleep", "movies", "Yoda", "The Office", "Parks and Rec", "college football", "celebration", "Happy Dance", "Favorites"];
+        var favoriteGIFs = [];
 
         ///////////////////////////////////////////
         // JavaScript
         ///////////////////////////////////////////
+        // function allowDrop(ev) {
+        //     ev.preventDefault();
+        // }
+
+        // function drag(ev) {
+        //     ev.dataTransfer.setData("text/plain", ev.target.id);
+        // }
+
+        // function drop(ev) {
+        //     ev.preventDefault();
+        //     var data = ev.dataTransfer.getData("text/plain");
+        //     ev.target.appendChild(document.getElementById(data));
+        // }
+
+
         function isEmpty(val) {
             return (val === undefined || val == null || val.length <= 0) ? true : false;
         };
@@ -73,7 +127,7 @@
         {
             topics.forEach(element => {
                 console.log(element);
-
+                
                 // add a button for each element in the array
                 addTopicButton(element);
             });
@@ -81,14 +135,35 @@
         };
 
         function addTopicButton(item) {
+            //p2.text(ProperCase(results[i].title));                          // Capitalize the first letter of every word
+            var properCaseItem = ProperCase(item);
+
             // add a button
             var newBtn = $("<button>");
-            newBtn.attr("data-topic",item);
-            newBtn.addClass("search-button btn btn-dark my-3 mx-1");
-            newBtn.text(item);
+            newBtn.attr("id",`topic-${properCaseItem}`)
+            newBtn.attr("data-topic",properCaseItem);
+            // newBtn.attr("draggable",true);                              // make the button draggable
+            // newBtn.attr("ondragstart","drag(event)");                   // make the button draggable
+            newBtn.addClass("search-button btn btn-dark btn-lg my-2 mx-2");
+            newBtn.text(properCaseItem);
 
-            var attachTo = $("#topic-list");
-            attachTo.append(newBtn);
+            if (item === "Favorites") {
+                var attachTo = $("#search-types");
+                // newBtn.removeClass("btn-dark");
+                // newBtn.addClass("btn-outline-dark");
+
+                //<i class="far fa-star" aria-hidden="true"></i>  fas for solid
+                var star = $("<i>");
+                star.addClass("fas fa-star text-warning mr-1");
+                star.attr("aria-hidden","true");
+        // newBtn.prepend(star);
+        
+        // attachTo.append(newBtn);
+            } else {
+                var attachTo = $("#topic-list");
+                attachTo.append(newBtn);
+            }
+            
         }
 
         ///////////////////////////////////////////
@@ -120,11 +195,14 @@
                         // empty all the topics and reload them all
                         var t = $("#topic-list");
                         t.empty();
+                        var fav = $("#search-types");
+                        fav.empty();
+
                         createTopicButtons();
 
                         $("#message").text("");
                     } else {
-                        $("#message").text("Topic Already Entered.");
+                        $("#message").text("Duplicate Topic.");
                     }
                 }
             });
@@ -149,7 +227,9 @@
                 console.log(queryURL);
 
                 // clear current results
-                $("#gifs").empty();
+                if (document.getElementById("clear-results").checked) {
+                    $("#gifs").empty();
+                }
 
                 $.ajax({
                     url: queryURL,
@@ -157,13 +237,24 @@
                 }).then(function(response) {
                     console.log(response);
             
-                    var results = response.data;        // data returned from Giphy app
+                    var results = response.data;                                            // data returned from Giphy app
             
                     for (var i = 0; i < results.length; i++) {
-            
+
+                        //convert this to a card  TODO
+                        // <div grid-row="span 2" grid-column="span 3">
+                        //     <img src="https://media1.giphy.com/media/LKTTAzGboJGzC/200_s.gif" data-static="https://media1.giphy.com/media/LKTTAzGboJGzC/200_s.gif" data-animated="https://media1.giphy.com/media/LKTTAzGboJGzC/200.gif" class="animate"/>
+                        //     <div>The Office Kevin Gif</div>
+                        //     <p>Rated G</p>
+                        // </div>
+
                         // construct the HTML that will be added
                         var newDiv = $("<div>");
+                        newDiv.attr({"grid-row":"span 2", "grid-column": "span 3"});
             
+                        var gifItemDiv = $("<div>");
+                        gifItemDiv.attr({"id":"gif-item"});
+
                         var p =  $("<p>");
                         if (!isEmpty(results[i].rating)) {
                             p.text("Rated " + results[i].rating.toUpperCase());
@@ -188,9 +279,10 @@
                         newImage.addClass("animate");
             
                         // add the elements to the DOM
-                        newDiv.append(newImage);
-                        newDiv.append(p2);
-                        newDiv.append(p);
+                        gifItemDiv.append(newImage);
+                        gifItemDiv.append(p2);
+                        gifItemDiv.append(p);
+                        newDiv.append(gifItemDiv);
                         $("#gifs").prepend(newDiv);
             
                     };
