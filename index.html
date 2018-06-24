@@ -16,7 +16,11 @@
     <!-- css styles -->
     <style type="text/css">
         body {
-            background: #F9F9F9;
+            background: white;   /* #F9F9F9 */
+        }
+
+        a {
+            text-decoration: none !important
         }
 
         #gifs {
@@ -26,12 +30,8 @@
             grid-auto-rows: minmax(150px, auto);
             /*grid-auto-flow: dense;*/
            grid-gap: 20px;
-         }
-/*
-        .tall-panel {
-            grid-row-end: span 2;
         }
-*/
+
         #gif-item > img {
             object-fit: cover;
             width: 100%;
@@ -43,41 +43,60 @@
 <body>
 
     <!-- Page Content-->
-    <div class="container-fluid my-4">
+    <div class="container-fluid m-auto">
 
-
-        <h1 class="text-center">GIFs Galore</h1>
-        <!-- Topic Buttons -->
         <div class="row">
-            <div class="col-12 w-auto">
-                <!--div id="topic-list" ondrop="drop(event,this);" ondragover="allowDrop(event);"-->
-                <div id="topic-list">
-                </div>
-                <div id="search-types" class="col-2">
-                </div>
-                <div class="ml-5 mr-auto">
-                    <input type="checkbox" id="clear-results" name="clear-gifs" value="clear" checked/>
-                    <label for="clear">Clear GIFs on Search</label>
+            <h1 class="text-center col-12 mt-4 mb-3">GIFs Galore</h1>
+        </div>
+
+        <!-- Search criteria -->
+        <div class="card border-0">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title m-0">
+                    <a class="text-muted" data-toggle="collapse" href="#collapse1" onclick="$('#collapsed-chevron').toggleClass('fa-rotate-180')">Topics
+                        <i class="fa fa-chevron-circle-up ml-2" id="collapsed-chevron"></i>
+                    </a>
+                </h5>
+            </div>
+
+            <div id="collapse1" class="card-collapse collapse show">
+                <div class="card-block">
+
+                    <!-- Topic Buttons -->
+                    <div class="row">
+                        <div class="col-12 w-auto">
+                            <!--div id="topic-list" ondrop="drop(event,this);" ondragover="allowDrop(event);"-->
+                            <div id="topic-list">
+                            </div>
+                            <div id="search-types" class="col-2">
+                            </div>
+                            <div class="ml-5 mr-auto">
+                                <input type="checkbox" id="clear-results" name="clear-gifs" value="clear" checked/>
+                                <label for="clear">Clear GIFs on Search</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New Topics -->
+                    <form role="form" class="m-0">
+                        <div class="form-group row m-2 d-flex">
+                            <!--label class="col-form-label col-sm-1" for="topic-input">Topic:</label-->
+                            <input class="form-control input-md ml-1 col-2" id="topic-input" type="text" placeholder="Add new topic" autofocus>
+                            <button class="btn btn-primary btn-md ml-3 px-3" id="add-topic" type="submit">Submit</button>
+
+                            <span id="message" class="ml-3 mt-1"></span>
+                        </div>
+                    </form>
+
                 </div>
             </div>
         </div>
-
-        <!-- New Topic -->
-        <form role="form" class="m-0">
-            <div class="form-group row m-2 d-flex">
-                <!--label class="col-form-label col-sm-1" for="topic-input">Topic:</label-->
-                <input class="form-control input-sm ml-1 col-sm-2" id="topic-input" type="text" placeholder="Enter topic or category" autofocus>
-                <button class="btn btn-primary btn-sm ml-3 px-5" id="add-topic" type="submit">Add</button>
-
-                <span id="message" class="ml-3 mt-1"></span>
-            </div>
-        </form>
 
         <hr>
 
         <!-- Gif Results -->
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 px-5">
                 <div id="gifs">
                 </div>
             </div>
@@ -144,7 +163,7 @@
             newBtn.attr("data-topic",properCaseItem);
             // newBtn.attr("draggable",true);                              // make the button draggable
             // newBtn.attr("ondragstart","drag(event)");                   // make the button draggable
-            newBtn.addClass("search-button btn btn-dark btn-lg my-2 mx-2");
+            newBtn.addClass("search-button btn btn-dark btn-md my-2 mx-2");
             newBtn.text(properCaseItem);
 
             if (item === "Favorites") {
