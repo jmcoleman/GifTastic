@@ -11,16 +11,17 @@
     <!-- Bootstrap 4.1 -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
 
+    <!-- bootswatch -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/cyborg/bootstrap.min.css">
+
     <title>GifTastic</title>
 
     <!-- css styles -->
     <style type="text/css">
-        body {
-            background: white;   /* #F9F9F9 */
-        }
 
         a {
-            text-decoration: none !important
+            text-decoration: none !important;
+            color: inherit !important;
         }
 
         #gifs {
@@ -28,16 +29,17 @@
             /*margin: 0 auto;*/
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             grid-auto-rows: minmax(150px, auto);
-            /*grid-auto-flow: dense;*/
-           grid-gap: 20px;
+            grid-auto-flow: dense;
+            grid-gap: 40px;
         }
 
-        #gif-item > img {
+/*        
+        .img-gif {
             object-fit: cover;
             width: 100%;
             max-height: 100%;
         }
-
+*/
     </style>
 </head>
 <body>
@@ -45,15 +47,15 @@
     <!-- Page Content-->
     <div class="container-fluid m-auto">
 
-        <div class="row">
-            <h1 class="text-center col-12 mt-4 mb-3">GIFs Galore</h1>
+        <div class="row mx-5">
+            <h1 class="text-center text-primary display-4 col-12 mt-4 mb-3">The Greatness of GIFs</h1>
         </div>
 
         <!-- Search criteria -->
-        <div class="card border-0">
-            <div class="card-header bg-transparent border-0">
+        <div class="card border-0 mx-5">
+            <div class="card-header bg-transparent border-0 text-primary">
                 <h5 class="card-title m-0">
-                    <a class="text-muted" data-toggle="collapse" href="#collapse1" onclick="$('#collapsed-chevron').toggleClass('fa-rotate-180')">Topics
+                    <a id="topic-section" class="" data-toggle="collapse" href="#collapse1">Topics
                         <i class="fa fa-chevron-circle-up ml-2" id="collapsed-chevron"></i>
                     </a>
                 </h5>
@@ -70,7 +72,7 @@
                             </div>
                             <div id="search-types" class="col-2">
                             </div>
-                            <div class="ml-5 mr-auto">
+                            <div class="ml-3 mr-auto mt-2">
                                 <input type="checkbox" id="clear-results" name="clear-gifs" value="clear" checked/>
                                 <label for="clear">Clear GIFs on Search</label>
                             </div>
@@ -82,7 +84,7 @@
                         <div class="form-group row m-2 d-flex">
                             <!--label class="col-form-label col-sm-1" for="topic-input">Topic:</label-->
                             <input class="form-control input-md ml-1 col-2" id="topic-input" type="text" placeholder="Add new topic" autofocus>
-                            <button class="btn btn-primary btn-md ml-3 px-3" id="add-topic" type="submit">Submit</button>
+                            <button class="btn btn-secondary btn-md ml-3 px-3" id="add-topic" type="submit">Submit</button>
 
                             <span id="message" class="ml-3 mt-1"></span>
                         </div>
@@ -92,18 +94,17 @@
             </div>
         </div>
 
-        <hr>
+        <!--hr-->
 
         <!-- Gif Results -->
-        <div class="row">
-            <div class="col-12 px-5">
+        <div class="row mx-5 mt-4">
+            <div class="col-12">
                 <div id="gifs">
                 </div>
             </div>
         </div>
 
     </div>
-
 
     <!-- Giphy API -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -163,7 +164,7 @@
             newBtn.attr("data-topic",properCaseItem);
             // newBtn.attr("draggable",true);                              // make the button draggable
             // newBtn.attr("ondragstart","drag(event)");                   // make the button draggable
-            newBtn.addClass("search-button btn btn-dark btn-md my-2 mx-2");
+            newBtn.addClass("search-button btn btn-primary btn-md my-2 mx-2");
             newBtn.text(properCaseItem);
 
             if (item === "Favorites") {
@@ -191,6 +192,12 @@
         $(document).ready (function() {
 
             createTopicButtons();
+
+            //onclick="$('#collapsed-chevron').toggleClass('fa-rotate-180')"
+            $("#topic-section").on("click",function() {
+                event.preventDefault();
+                $('#collapsed-chevron').toggleClass('fa-rotate-180');
+            })
 
             $("#add-topic").on("click", function() {
                 event.preventDefault();
@@ -260,49 +267,56 @@
             
                     for (var i = 0; i < results.length; i++) {
 
-                        //convert this to a card  TODO
-                        // <div grid-row="span 2" grid-column="span 3">
-                        //     <img src="https://media1.giphy.com/media/LKTTAzGboJGzC/200_s.gif" data-static="https://media1.giphy.com/media/LKTTAzGboJGzC/200_s.gif" data-animated="https://media1.giphy.com/media/LKTTAzGboJGzC/200.gif" class="animate"/>
-                        //     <div>The Office Kevin Gif</div>
-                        //     <p>Rated G</p>
-                        // </div>
+                        /* sample for construction
+                        <div class="card" style="width:400px">                                               
+                            <img class="card-img-top"/>
+                            <div class="card-body">
+                            <h4 class="card-title">John Doe</h4>
+                            <p class="card-text">Some example text some example text. John Doe is an architect and engineer</p>
+                            </div>
+                        </div>
+                        */
 
                         // construct the HTML that will be added
-                        var newDiv = $("<div>");
-                        newDiv.attr({"grid-row":"span 2", "grid-column": "span 3"});
-            
-                        var gifItemDiv = $("<div>");
-                        gifItemDiv.attr({"id":"gif-item"});
+                        var cardDiv = $("<div>");
+                        cardDiv.addClass("card");
 
-                        var p =  $("<p>");
-                        if (!isEmpty(results[i].rating)) {
-                            p.text("Rated " + results[i].rating.toUpperCase());
-                        } else {
-                            p.text("Not Rated");
-                        };
-
-                        var p2 =  $("<div>");
-                        if (!isEmpty(results[i].title)) {
-                            p2.text(ProperCase(results[i].title));                          // Capitalize the first letter of every word
-                        } else {
-                            p2.text("NONE");
-                        };
-
-                        var newImage = $("<img>");
-                        newImage.attr("src",results[i].images.fixed_height_still.url);
+                        var gifImageElem = $("<img>");
+                        gifImageElem.attr("src",results[i].images.fixed_height_still.url);
                         if (!isEmpty(results[i].images.title)) {
-                            newImage.attr("alt", results[i].images.title);
+                            gifImageElem.attr("alt", results[i].images.title.trim());
+                        } else {
+                            gifImageElem.attr("alt", "GIF image");
                         };
-                        newImage.attr("data-static",results[i].images.fixed_height_still.url);
-                        newImage.attr("data-animated",results[i].images.fixed_height.url);
-                        newImage.addClass("animate");
-            
+                        gifImageElem.attr("data-static",results[i].images.fixed_height_still.url);
+                        gifImageElem.attr("data-animated",results[i].images.fixed_height.url);
+                        gifImageElem.addClass("card-img-top animate");                                      // img-gif
+
+                        var cardBodyDiv = $("<div>");
+                        cardBodyDiv.addClass("card-body");
+
+                        var titleElem =  $("<h5>");
+                        if (!isEmpty(results[i].title)) {
+                            titleElem.text(ProperCase(results[i].title.trim()));                          // Capitalize the first letter of every word
+                        } else {
+                            titleElem.text("NONE");
+                        };
+
+                        var ratingElem =  $("<p>");
+                        ratingElem.addClass("mb-0");
+                        if (!isEmpty(results[i].rating)) {
+                            ratingElem.text("Rated " + results[i].rating.trim().toUpperCase());
+                        } else {
+                            ratingElem.text("Not Rated");
+                        };
+
+                        cardBodyDiv.append(titleElem);
+                        cardBodyDiv.append(ratingElem);
+                        cardDiv.append(gifImageElem);
+                        cardDiv.append(cardBodyDiv);
+
                         // add the elements to the DOM
-                        gifItemDiv.append(newImage);
-                        gifItemDiv.append(p2);
-                        gifItemDiv.append(p);
-                        newDiv.append(gifItemDiv);
-                        $("#gifs").prepend(newDiv);
+                        $("#gifs").prepend(cardDiv);
             
                     };
             
