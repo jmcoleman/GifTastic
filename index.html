@@ -145,6 +145,10 @@
 
         function createTopicButtons()
         {
+            topics.sort(function (a, b) {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+            });
+
             topics.forEach(element => {
                 console.log(element);
                 
