@@ -1,98 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-        <!-- font awesome -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+		<!-- font awesome -->
+		<script
+			src="https://kit.fontawesome.com/0e9d509a8e.js"
+			crossorigin="anonymous"
+		></script>
 
-        <!-- Bootstrap 4.1 -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+		<!-- Bootstrap CSS -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+			crossorigin="anonymous"
+		/>
 
-        <!-- bootswatch -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/cyborg/bootstrap.min.css">
+		<!-- bootswatch -->
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/cyborg/bootstrap.min.css"
+		/>
 
-        <!-- local stylesheet -->
-        <link type="text/css" rel="stylesheet" href="assets/css/style.css">
+		<!-- local stylesheet -->
+		<link type="text/css" rel="stylesheet" href="assets/css/style.css" />
 
-        <title>GifTastic</title>
+		<title>GifTastic</title>
+	</head>
+	<body class="d-flex flex-column justify-content-end min-vh-100">
+		<!-- Header -->
+		<header>
+			<h2 class="text-center text-primary mt-4 mb-3">The Greatness of GIFs</h2>
+		</header>
 
-    </head>
-    <body>
+		<!-- Page Content-->
+		<div class="container-fluid mx-auto">
+			<!-- Search criteria -->
+			<div class="border-0 mx-5">
+				<!-- header -->
+				<div class="bg-transparent text-primary">
+					<h5 class="m-0">
+						Topics
+						<a
+							id="topic-section"
+							class=""
+							data-bs-toggle="collapse"
+							href="#collapse1"
+							role="button"
+							aria-expanded="false"
+							aria-controls="collapse1"
+						>
+							<i
+								class="fa fa-chevron-circle-up float-end"
+								id="collapsed-chevron"
+							></i
+						></a>
+					</h5>
+				</div>
+				<!-- show the topic list -->
+				<div id="collapse1" class="card-collapse collapse show">
+					<div class="">
+						<!-- topic buttons -->
+						<div class="w-auto">
+							<div id="topic-list"></div>
+						</div>
+					</div>
+				</div>
+				<!-- clear Gifs on search -->
+				<div class="ml-3 mr-auto mt-3">
+					<input
+						type="checkbox"
+						id="clear-results"
+						name="clear-gifs"
+						value="clear"
+						checked
+					/>
+					<label for="clear">Clear GIFs on Search</label>
+				</div>
 
-        <!-- Page Content-->
-        <div class="container-fluid m-auto">
+				<!-- add new topics -->
+				<form role="form" class="m-0">
+					<div class="form-group row m-2 d-flex">
+						<input
+							class="form-control d-block col-6"
+							id="topic-input"
+							type="text"
+							placeholder="Enter a new topic..."
+							autofocus
+						/>
+						<button
+							class="btn btn-secondary d-block col-2 ml-2"
+							id="add-topic"
+							type="submit"
+						>
+							Submit
+						</button>
 
-            <div class="row mx-5">
-                <h1 class="text-center text-primary display-4 col-12 mt-4 mb-3">The Greatness of GIFs</h1>
-            </div>
+						<span id="message" class="mt-1 ml-0 pl-0"></span>
+					</div>
+				</form>
+			</div>
 
-            <!-- Search criteria -->
-            <div class="card border-0 mx-5">
-                <div class="card-header bg-transparent border-0 text-primary">
-                    <h5 class="card-title m-0">
-                        <a id="topic-section" class="" data-toggle="collapse" href="#collapse1">Topics
-                            <i class="fa fa-chevron-circle-up ml-2" id="collapsed-chevron"></i>
-                        </a>
-                    </h5>
-                </div>
+			<!-- Gif Results -->
+			<div class="mx-5 mt-4">
+				<div class="">
+					<div id="gifs"></div>
+				</div>
+			</div>
+		</div>
 
-                <div id="collapse1" class="card-collapse collapse show">
-                    <div class="card-block">
+		<!-- Footer -->
+		<footer class="mt-auto">
+			<!-- Copyright -->
+			<div
+				class="text-center small"
+				style="background-color: rgba(0, 0, 0, 0.2)"
+			>
+				<div class="text-center">© 2021 Copyright</div>
+				<a class="text-white" href="https://www.giphy.com/">Powered By GIPHY</a>
+			</div>
+			<!-- Copyright -->
+		</footer>
 
-                        <!-- Topic Buttons -->
-                        <div class="row">
-                            <div class="col-12 w-auto">
-                                <!--div id="topic-list" ondrop="drop(event,this);" ondragover="allowDrop(event);"-->
-                                <div id="topic-list">
-                                </div>
-                                <div id="search-types" class="col-2">
-                                </div>
-                                <div class="ml-3 mr-auto mt-2">
-                                    <input type="checkbox" id="clear-results" name="clear-gifs" value="clear" checked/>
-                                    <label for="clear">Clear GIFs on Search</label>
-                                </div>
-                            </div>
-                        </div>
+		<!-- Bootstrap 5.0 -->
+		<script
+			src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+			integrity="sha384-eMNCOe7tC1doHpGoWe/6oMVemdAVTMs2xqW4mwXrXsW0L84Iytr2wi5v2QjrP/xp"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"
+			integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/"
+			crossorigin="anonymous"
+		></script>
 
-                        <!-- New Topics -->
-                        <form role="form" class="m-0">
-                            <div class="form-group row m-2 d-flex">
-                                <!--label class="col-form-label col-sm-1" for="topic-input">Topic:</label-->
-                                <input class="form-control input-md ml-1 col-2" id="topic-input" type="text" placeholder="Add new topic" autofocus>
-                                <button class="btn btn-secondary btn-md ml-3 px-3" id="add-topic" type="submit">Submit</button>
-
-                                <span id="message" class="ml-3 mt-1"></span>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gif Results -->
-            <div class="row mx-5 mt-4">
-                <div class="col-12">
-                    <div id="gifs">
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Giphy API -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-        <!-- Bootstrap 4.1 w/ajax -->
-        <!--script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script-->
-        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-
-        <!-- local js -->
-        <script type="text/javascript" src="assets/javascript/gif.js"></script>        
-
-    </body>
+		<!-- local js -->
+		<script type="text/javascript" src="assets/javascript/gif.js"></script>
+	</body>
 </html>
