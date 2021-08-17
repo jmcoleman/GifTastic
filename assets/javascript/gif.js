@@ -1,241 +1,249 @@
+////////////////
+// Load topics
+////////////////
+let topics = [
+	'clapping',
+	'LOL',
+	'The Incredibles',
+	'cat',
+	'Bob Ross',
+	'summer',
+	'minions',
+	'Nike',
+	'holiday',
+	'mountains',
+	'beaches',
+	'hiking',
+	'sking',
+	'play',
+	'sleep',
+	'movies',
+	'Yoda',
+	'The Office',
+	'Parks and Rec',
+	'college football',
+	'celebration',
+	'Happy Dance',
+	'Favorites',
+]
+topics = topics.map((topic) => topic.toLowerCase())
 
-///////////////////////////////////////////
-// Variables
-///////////////////////////////////////////
-var topics = ["clapping", "LOL", "The Incredibles", "cat", "Bob Ross", "summer", "minions", "Nike", "holiday", "mountains", "beaches", "hiking", "sking", "play", "sleep", "movies", "Yoda", "The Office", "Parks and Rec", "college football", "celebration", "Happy Dance", "Favorites"];
-var favoriteGIFs = [];
+/////////////////////////
+// load variables
+/////////////////////////
+const GIPHY_ITEM_LIMIT = 10
+const GIPHY_API_KEY = 'qE5VEI7m7vEyr5u78viHHZEPaPRIkgo8'
 
-///////////////////////////////////////////
-// JavaScript
-///////////////////////////////////////////
-// function allowDrop(ev) {
-//     ev.preventDefault();
-// }
+const topicSectionEl = document.getElementById('topic-section')
+const topicListEl = document.getElementById('topic-list')
+const topicInputEl = document.getElementById('topic-input')
+const gifsEl = document.getElementById('gifs')
 
-// function drag(ev) {
-//     ev.dataTransfer.setData("text/plain", ev.target.id);
-// }
-
-// function drop(ev) {
-//     ev.preventDefault();
-//     var data = ev.dataTransfer.getData("text/plain");
-//     ev.target.appendChild(document.getElementById(data));
-// }
-
-
+/////////////////
+// functions
+/////////////////
 function isEmpty(val) {
-    return (val === undefined || val == null || val.length <= 0) ? true : false;
-};
-
-function ProperCase(txt) {
-    return txt.replace(/\w\S*/g, c => c.charAt(0).toUpperCase() + c.substr(1).toLowerCase());
-};
-
-function createTopicButtons()
-{
-    topics.sort(function (a, b) {
-        return a.toLowerCase().localeCompare(b.toLowerCase());
-    });
-
-    topics.forEach(element => {
-        console.log(element);
-        
-        // add a button for each element in the array
-        addTopicButton(element);
-    });
-
-};
-
-function addTopicButton(item) {
-    //p2.text(ProperCase(results[i].title));                          // Capitalize the first letter of every word
-    var properCaseItem = ProperCase(item);
-
-    // add a button
-    var newBtn = $("<button>");
-    newBtn.attr("id",`topic-${properCaseItem}`)
-    newBtn.attr("data-topic",properCaseItem);
-    // newBtn.attr("draggable",true);                              // make the button draggable
-    // newBtn.attr("ondragstart","drag(event)");                   // make the button draggable
-    newBtn.addClass("search-button btn btn-primary btn-md my-2 mx-2");
-    newBtn.text(properCaseItem);
-
-    if (item === "Favorites") {
-        var attachTo = $("#search-types");
-        // newBtn.removeClass("btn-dark");
-        // newBtn.addClass("btn-outline-dark");
-
-        //<i class="far fa-star" aria-hidden="true"></i>  fas for solid
-        var star = $("<i>");
-        star.addClass("fas fa-star text-warning mr-1");
-        star.attr("aria-hidden","true");
-// newBtn.prepend(star);
-
-// attachTo.append(newBtn);
-    } else {
-        var attachTo = $("#topic-list");
-        attachTo.append(newBtn);
-    }
-    
+	return val === undefined || val == null || val.length <= 0 ? true : false
 }
 
-///////////////////////////////////////////
-// JQuery
-///////////////////////////////////////////
-$(document).ready (function() {
+// Capitalize the first letter of every word
+function ProperCase(txt) {
+	return txt.replace(
+		/\w\S*/g,
+		(c) => c.charAt(0).toUpperCase() + c.substr(1).toLowerCase()
+	)
+}
 
-    createTopicButtons();
+// load the topics from memory
+function loadTopics() {
+	topics.sort(function (a, b) {
+		return a.toLowerCase().localeCompare(b.toLowerCase())
+	})
 
-    //onclick="$('#collapsed-chevron').toggleClass('fa-rotate-180')"
-    $("#topic-section").on("click",function() {
-        event.preventDefault();
-        $('#collapsed-chevron').toggleClass('fa-rotate-180');
-    })
+	// add a button for each element in the array
+	topics.forEach((element) => {
+		addTopicButton(element)
+	})
+}
 
-    $("#add-topic").on("click", function() {
-        event.preventDefault();
+// add a topic button element
+function addTopicButton(item) {
+	const parentEl = document.getElementById('topic-list')
+	const properCaseItem = ProperCase(item)
 
-        console.log("add topic submit");
+	// create the topic element
+	const newBtn = document.createElement('button')
+	newBtn.setAttribute('id', `topic-${item}`)
+	newBtn.setAttribute('data-topic', `${item}`)
+	newBtn.classList.add('search-button', 'btn', 'btn-primary', 'btn-md', 'm-2')
+	newBtn.textContent = properCaseItem
 
-        var inputData = $("#topic-input").val().trim();
-        $("#topic-input").val("");
+	// attach the new element to the DOM
+	parentEl.append(newBtn)
+}
 
-        // if a value is given
-        if (!isEmpty(inputData)) {
+// construct the gif card
+function constructCard(resultItem) {
+	// create the card element
+	const cardDiv = document.createElement('div')
+	cardDiv.classList.add('card')
 
-            // if topic is not already in the list
-            if (topics.indexOf(inputData) === -1) {
-                // adds to array
-                topics.push(inputData);
+	// create the image element
+	const gifImageElem = document.createElement('img')
+	gifImageElem.setAttribute('src', resultItem.images.fixed_height_still.url)
+	if (!isEmpty(resultItem.images.title)) {
+		gifImageElem.setAttribute('alt', resultItem.images.title.trim())
+	} else {
+		gifImageElem.setAttribute('alt', 'GIF image')
+	}
+	gifImageElem.setAttribute(
+		'data-static',
+		resultItem.images.fixed_height_still.url
+	)
+	gifImageElem.setAttribute('data-animated', resultItem.images.fixed_height.url)
+	gifImageElem.classList.add('card-img-top', 'animate')
 
-                // add a new button for the topic
-                //addTopicButton(inputData);
+	// create the card body
+	const cardBodyDiv = document.createElement('div')
+	cardBodyDiv.classList.add('card-body')
 
-                // empty all the topics and reload them all
-                var t = $("#topic-list");
-                t.empty();
-                var fav = $("#search-types");
-                fav.empty();
+	// create the title
+	const titleElem = document.createElement('h5')
+	if (!isEmpty(resultItem.title)) {
+		titleElem.textContent = ProperCase(resultItem.title.trim())
+	} else {
+		titleElem.textContent = 'NONE'
+	}
 
-                createTopicButtons();
+	// create the rating
+	const ratingElem = document.createElement('p')
+	ratingElem.classList.add('mb-0')
+	if (!isEmpty(resultItem.rating)) {
+		ratingElem.textContent = 'Rated ' + resultItem.rating.trim().toUpperCase()
+	} else {
+		ratingElem.textContent = 'Not Rated'
+	}
 
-                $("#message").text("");
-            } else {
-                $("#message").text("Duplicate Topic.");
-            }
-        }
-    });
+	// assemble the card
+	cardBodyDiv.append(titleElem)
+	cardBodyDiv.append(ratingElem)
+	cardDiv.append(gifImageElem)
+	cardDiv.append(cardBodyDiv)
 
-    $("#topic-list").delegate("button.search-button","click", function() {
+	return cardDiv
+}
 
-        // prevent the page from reloading
-        event.preventDefault();
+/////////////////////////////
+// Event Handler functions
+////////////////////////////
+function addTopicHandler(e) {
+	const inputEl = document.getElementById('topic-input')
+	const inputData = inputEl.value.trim()
+	const lowerCaseInputData = inputData.toLowerCase()
+	const messageEl = document.getElementById('message')
 
-        // clear any messges that remain from adding duplicate topics
-        $("#message").text("");
-        
-        // set up query string
-        var topic = $(this).attr("data-topic");
-        var itemLimit = 10;
-        const USER_API_KEY = "qE5VEI7m7vEyr5u78viHHZEPaPRIkgo8";
+	// if a value is given
+	if (!isEmpty(inputData)) {
+		// if topic is not already in the list, add it
+		if (topics.indexOf(lowerCaseInputData) === -1) {
+			topics.push(lowerCaseInputData)
+			messageEl.textContent = ''
+			addTopicButton(lowerCaseInputData)
+		} else {
+			//show message for 3 seconds
+			messageEl.textContent = `${inputData} exists and was not added.`
+			setTimeout(function () {
+				messageEl.textContent = ''
+			}, 3000)
+		}
 
-        var queryURL = "https://api.giphy.com/v1/gifs/search?" +
-            "q=" + topic + 
-            "&api_key=" + USER_API_KEY +
-            "&limit=" + itemLimit;
-        console.log(queryURL);
+		inputEl.value = ''
+		inputEl.focus()
 
-        // clear current results
-        if (document.getElementById("clear-results").checked) {
-            $("#gifs").empty();
-        }
+		const searchTopicEl = document.getElementById(`topic-${lowerCaseInputData}`)
+		searchTopicEl.click()
+	}
+	e.preventDefault()
+}
 
-        $.ajax({
-            url: queryURL,
-            method: "GET"
-        }).then(function(response) {
-            console.log(response);
-    
-            var results = response.data;                                            // data returned from Giphy app
-    
-            for (var i = 0; i < results.length; i++) {
+function topicShowCollapseHandler(e) {
+	const collapsibleChevron = document.getElementById('collapsed-chevron')
+	collapsibleChevron.classList.toggle('fa-rotate-180')
+}
 
-                /* sample for construction
-                <div class="card" style="width:400px">                                               
-                    <img class="card-img-top"/>
-                    <div class="card-body">
-                    <h4 class="card-title">John Doe</h4>
-                    <p class="card-text">Some example text some example text. John Doe is an architect and engineer</p>
-                    </div>
-                </div>
-                */
+async function searchGifsHandler(e) {
+	// prevent the page from reloading
+	e.preventDefault()
 
-                // construct the HTML that will be added
-                var cardDiv = $("<div>");
-                cardDiv.addClass("card");
+	const gifsEl = document.getElementById('gifs')
+	const topic = e.target.dataset.topic
 
-                var gifImageElem = $("<img>");
-                gifImageElem.attr("src",results[i].images.fixed_height_still.url);
-                if (!isEmpty(results[i].images.title)) {
-                    gifImageElem.attr("alt", results[i].images.title.trim());
-                } else {
-                    gifImageElem.attr("alt", "GIF image");
-                };
-                gifImageElem.attr("data-static",results[i].images.fixed_height_still.url);
-                gifImageElem.attr("data-animated",results[i].images.fixed_height.url);
-                gifImageElem.addClass("card-img-top animate");                                      // img-gif
+	// set up query string
+	const queryURL =
+		'https://api.giphy.com/v1/gifs/search?' +
+		'q=' +
+		topic +
+		'&api_key=' +
+		GIPHY_API_KEY +
+		'&limit=' +
+		GIPHY_ITEM_LIMIT
+	const uri = encodeURI(queryURL)
 
-                var cardBodyDiv = $("<div>");
-                cardBodyDiv.addClass("card-body");
+	// fetch giphy data
+	await fetch(uri)
+		.then((response) => response.json())
+		.then((json) => {
+			const results = json.data
+			// console.log('Data:', results)
 
-                var titleElem =  $("<h5>");
-                if (!isEmpty(results[i].title)) {
-                    titleElem.text(ProperCase(results[i].title.trim()));                          // Capitalize the first letter of every word
-                } else {
-                    titleElem.text("NONE");
-                };
+			if (document.getElementById('clear-results').checked) {
+				// clear current results
+				gifsEl.replaceChildren()
+			}
 
-                var ratingElem =  $("<p>");
-                ratingElem.addClass("mb-0");
-                if (!isEmpty(results[i].rating)) {
-                    ratingElem.text("Rated " + results[i].rating.trim().toUpperCase());
-                } else {
-                    ratingElem.text("Not Rated");
-                };
+			// add the elements to the DOM
+			for (let i = 0; i < results.length; i++) {
+				let cardDiv = constructCard(results[i])
+				gifsEl.prepend(cardDiv)
+			}
+			topicInputEl.focus()
+		})
+}
 
-                cardBodyDiv.append(titleElem);
-                cardBodyDiv.append(ratingElem);
-                cardDiv.append(gifImageElem);
-                cardDiv.append(cardBodyDiv);
+function animateGifHandler(e) {
+	e.preventDefault()
 
-                // add the elements to the DOM
-                $("#gifs").prepend(cardDiv);
-    
-            };
-    
-        });
+	console.log('FIRED the event listener for: gifsEl click')
+	console.log('this: ', this)
+	console.log('e.target: ', e.target)
 
-    });
+	const currentSrc = e.target.getAttribute('src')
+	const staticGIF = e.target.getAttribute('data-static')
+	const animatedGIF = e.target.getAttribute('data-animated')
 
-    $("#gifs").delegate(".animate", "click", function() {
-        // prevent the page from reloading
-        event.preventDefault();
+	e.target.setAttribute(
+		'src',
+		currentSrc === staticGIF ? animatedGIF : staticGIF
+	)
+}
 
-        console.log("GIF ready to animate");
+///////////////////////////
+// Add Event Listeners
+///////////////////////////
+function addGlobalEventListener(type, selector, callback) {
+	document.addEventListener(
+		type,
+		(e) => {
+			if (e.target.matches(selector)) callback(e)
+		},
+		false
+	)
+}
 
-        var currentSrc =  $(this).attr("src");
-        var animatedGIF = $(this).attr("data-static");
-        var staticGIF = $(this).attr("data-animated");
+addGlobalEventListener('click', '#topic-section', topicShowCollapseHandler)
+addGlobalEventListener('click', '#add-topic', addTopicHandler)
+addGlobalEventListener('click', '.search-button.btn', searchGifsHandler)
+addGlobalEventListener('click', '.animate', animateGifHandler)
 
-        console.log(currentSrc);
-        console.log(animatedGIF);
-        console.log(staticGIF);
-        
-        if (currentSrc === animatedGIF) {
-            $(this).attr("src",staticGIF);    
-        } else {
-            $(this).attr("src",animatedGIF);
-        }
-
-    });
-
-});
+// Start app up
+loadTopics()
