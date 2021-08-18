@@ -37,10 +37,9 @@ const GIPHY_API_KEY = 'qE5VEI7m7vEyr5u78viHHZEPaPRIkgo8'
 const topicSectionEl = document.getElementById('topic-section')
 const topicListEl = document.getElementById('topic-list')
 const topicInputEl = document.getElementById('topic-input')
-const gifsEl = document.getElementById('gifs')
 
 /////////////////
-// functions
+// Functions
 /////////////////
 function isEmpty(val) {
 	return val === undefined || val == null || val.length <= 0 ? true : false
@@ -86,7 +85,7 @@ function addTopicButton(item) {
 function constructCard(resultItem) {
 	// create the card element
 	const cardDiv = document.createElement('div')
-	cardDiv.classList.add('card')
+	cardDiv.classList.add('card', 'gif')
 
 	// create the image element
 	const gifImageElem = document.createElement('img')
@@ -206,25 +205,52 @@ async function searchGifsHandler(e) {
 				let cardDiv = constructCard(results[i])
 				gifsEl.prepend(cardDiv)
 			}
+
+			// add the event listeners to the cards just created
+			const gifsElAdded = document.getElementById('gifs')
+			if (gifsElAdded.hasChildNodes()) {
+				for (let i = 0; i < gifsElAdded.childNodes.length; i++) {
+					gifsElAdded.childNodes[i].addEventListener(
+						'click',
+						animateCardGifHandler,
+						false
+					)
+				}
+			}
+
 			topicInputEl.focus()
 		})
+		.catch((error) => (document.body.appendChild = error))
 }
 
-function animateGifHandler(e) {
+function animateCardGifHandler(e) {
 	e.preventDefault()
 
-	console.log('FIRED the event listener for: gifsEl click')
-	console.log('this: ', this)
-	console.log('e.target: ', e.target)
+	// console.log(`LOCAL FIRED the animateCardGifHandler`)
+	// console.log('this: ', this)
+	// console.log('e.target: ', e.target)
 
-	const currentSrc = e.target.getAttribute('src')
-	const staticGIF = e.target.getAttribute('data-static')
+	el = this.firstElementChild
+
+	const currentSrc = el.getAttribute('src')
+	const staticGIF = el.getAttribute('data-static')
+	const animatedGIF = el.getAttribute('data-animated')
+
+	el.setAttribute('src', currentSrc === staticGIF ? animatedGIF : staticGIF)
+}
+
+function animateGifOverHandler(e) {
+	e.preventDefault()
+
 	const animatedGIF = e.target.getAttribute('data-animated')
+	e.target.setAttribute('src', animatedGIF)
+}
 
-	e.target.setAttribute(
-		'src',
-		currentSrc === staticGIF ? animatedGIF : staticGIF
-	)
+function animateGifOutHandler(e) {
+	e.preventDefault()
+
+	const staticGIF = e.target.getAttribute('data-static')
+	e.target.setAttribute('src', staticGIF)
 }
 
 ///////////////////////////
@@ -243,7 +269,8 @@ function addGlobalEventListener(type, selector, callback) {
 addGlobalEventListener('click', '#topic-section', topicShowCollapseHandler)
 addGlobalEventListener('click', '#add-topic', addTopicHandler)
 addGlobalEventListener('click', '.search-button.btn', searchGifsHandler)
-addGlobalEventListener('click', '.animate', animateGifHandler)
+addGlobalEventListener('mouseover', '.animate', animateGifOverHandler)
+addGlobalEventListener('mouseout', '.animate', animateGifOutHandler)
 
 // Start app up
 loadTopics()
